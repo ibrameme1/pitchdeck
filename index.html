@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muhammad Ibrahim | Builder × Strategist × Disruptor</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background: #00ff88;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            transition: transform 0.15s ease;
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(0, 255, 136, 0.5);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.2s ease;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 30px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            color: #00ff88;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 100px 60px 60px;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.15), transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(0, 212, 255, 0.15), transparent 50%);
+            animation: gradient 15s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .hero-label {
+            font-size: 14px;
+            color: #00ff88;
+            letter-spacing: 3px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            animation: slideInLeft 0.8s ease forwards;
+        }
+
+        .hero-title {
+            font-size: 120px;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.6) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: slideInLeft 0.8s ease 0.2s forwards;
+            opacity: 0;
+        }
+
+        .hero-subtitle {
+            font-size: 32px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 40px;
+            max-width: 900px;
+            animation: slideInLeft 0.8s ease 0.4s forwards;
+            opacity: 0;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            margin-top: 80px;
+            animation: fadeInUp 0.8s ease 0.6s forwards;
+            opacity: 0;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+            cursor: default;
+        }
+
+        .stat:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #00ff88;
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section {
+            padding: 120px 60px;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 72px;
+            font-weight: 900;
+            margin-bottom: 60px;
+            background: linear-gradient(135deg, #fff, rgba(255, 255, 255, 0.5));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-subtitle {
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 80px;
+            max-width: 800px;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .impact-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.3s;
+            cursor: default;
+        }
+
+        .impact-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #00ff88;
+            transform: translateY(-10px);
+        }
+
+        .impact-company {
+            font-size: 14px;
+            color: #00ff88;
+            letter-spacing: 2px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .impact-role {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .impact-period {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 25px;
+        }
+
+        .impact-metric {
+            font-size: 48px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .impact-description {
+            font-size: 16px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 15px;
+        }
+
+        .impact-bullets {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .impact-bullets li {
+            padding-left: 30px;
+            position: relative;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .impact-bullets li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #00ff88;
+            font-weight: 700;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .timeline-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 80px;
+            position: relative;
+        }
+
+        .timeline-content {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.3s;
+        }
+
+        .timeline-content:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #00ff88;
+            transform: scale(1.02);
+        }
+
+        .awards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .award-card {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1));
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.3s;
+            cursor: default;
+        }
+
+        .award-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 255, 136, 0.2);
+        }
+
+        .award-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .award-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .award-description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+
+        .skills-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .skill-category {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+        }
+
+        .skill-category-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #00ff88;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .skill-tag {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            cursor: default;
+        }
+
+        .skill-tag:hover {
+            background: rgba(0, 255, 136, 0.2);
+            transform: scale(1.05);
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1));
+            border-radius: 30px;
+            padding: 100px 60px;
+            text-align: center;
+            margin: 120px 60px;
+        }
+
+        .cta-title {
+            font-size: 64px;
+            font-weight: 900;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cta-subtitle {
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 50px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            border-color: #00ff88;
+            color: #00ff88;
+            transform: translateY(-3px);
+        }
+
+        .footer {
+            padding: 60px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-text {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+        }
+
+        .story-section {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 120px 60px;
+        }
+
+        .story-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .story-text {
+            font-size: 20px;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .story-text strong {
+            color: #00ff88;
+            font-weight: 700;
+        }
+
+        .story-highlight {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1));
+            border-left: 4px solid #00ff88;
+            padding: 40px;
+            border-radius: 20px;
+            font-size: 24px;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        .principles {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .principle-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .principle-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #00ff88;
+            transform: translateY(-10px);
+        }
+
+        .principle-number {
+            font-size: 72px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .principle-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .principle-description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1200px) {
+            .hero-title {
+                font-size: 80px;
+            }
+            .section-title {
+                font-size: 56px;
+            }
+            .explore-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 48px;
+            }
+            .hero-subtitle {
+                font-size: 20px;
+            }
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+            .story-grid {
+                grid-template-columns: 1fr;
+            }
+            .principles {
+                grid-template-columns: 1fr;
+            }
+            .skills-container {
+                grid-template-columns: 1fr;
+            }
+            .section-title {
+                font-size: 36px;
+            }
+            .explore-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .scroll-text {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .scroll-arrow {
+            font-size: 24px;
+            color: #00ff88;
+            animation: pulse 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        function App() {
+            const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+            const [cursorOutlinePos, setCursorOutlinePos] = useState({ x: 0, y: 0 });
+
+            useEffect(() => {
+                const handleMouseMove = (e) => {
+                    setCursorPos({ x: e.clientX, y: e.clientY });
+                    setTimeout(() => {
+                        setCursorOutlinePos({ x: e.clientX, y: e.clientY });
+                    }, 50);
+                };
+
+                window.addEventListener('mousemove', handleMouseMove);
+                return () => window.removeEventListener('mousemove', handleMouseMove);
+            }, []);
+
+            const scrollToSection = (sectionId) => {
+                document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            return (
+                <>
+                    <div 
+                        className="cursor-dot" 
+                        style={{ 
+                            left: `${cursorPos.x}px`, 
+                            top: `${cursorPos.y}px`,
+                            transform: 'translate(-50%, -50%)'
+                        }} 
+                    />
+                    <div 
+                        className="cursor-outline" 
+                        style={{ 
+                            left: `${cursorOutlinePos.x}px`, 
+                            top: `${cursorOutlinePos.y}px`,
+                            transform: 'translate(-50%, -50%)'
+                        }} 
+                    />
+
+                    <nav className="nav">
+                        <div className="logo">MI</div>
+                        <div className="nav-links">
+                            <a className="nav-link" onClick={() => scrollToSection('impact')}>Impact</a>
+                            <a className="nav-link" onClick={() => scrollToSection('story')}>Story</a>
+                            <a className="nav-link" onClick={() => scrollToSection('hyperbeing')}>HyperBeing</a>
+                            <a className="nav-link" onClick={() => scrollToSection('awards')}>Awards</a>
+                            <a className="nav-link" onClick={() => scrollToSection('contact')}>Contact</a>
+                        </div>
+                    </nav>
+
+                    <section className="hero">
+                        <div className="hero-bg"></div>
+                        <div className="hero-content">
+                            <div className="hero-label">Builder × Strategist × Disruptor</div>
+                            <h1 className="hero-title">MUHAMMAD<br/>IBRAHIM</h1>
+                            <p className="hero-subtitle">
+                                Delivered historic quarterly volumes at Unilever. Scaled AI startup to 9M+ users. 
+                                Competed globally at Cannes. Now ready to disrupt what's next.
+                            </p>
+                            
+                            <div className="hero-stats">
+                                <div className="stat">
+                                    <div className="stat-number">€70M</div>
+                                    <div className="stat-label">Portfolio Led</div>
+                                </div>
+                                <div className="stat">
+                                    <div className="stat-number">9M+</div>
+                                    <div className="stat-label">Users Reached</div>
+                                </div>
+                                <div className="stat">
+                                    <div className="stat-number">760M+</div>
+                                    <div className="stat-label">Campaign Views</div>
+                                </div>
+                                <div className="stat">
+                                    <div className="stat-number">TOP 4</div>
+                                    <div className="stat-label">Cannes Global</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="scroll-indicator">
+                            <div className="scroll-text">Scroll to explore</div>
+                            <div className="scroll-arrow">↓</div>
+                        </div>
+                    </section>
+
+                    <section id="impact" className="section">
+                        <h2 className="section-title">The Impact</h2>
+                        <p className="section-subtitle">
+                            I don't just deliver projects. I deliver transformation that moves markets, scales businesses, and creates cultural moments.
+                        </p>
+
+                        <div className="impact-grid">
+                            <div className="impact-card">
+                                <div className="impact-company">Unilever</div>
+                                <div className="impact-role">Associate Brand Manager</div>
+                                <div className="impact-period">Jul 2024 - Present</div>
+                                <div className="impact-metric">30-Year Record</div>
+                                <div className="impact-description">
+                                    Delivered Q3'25 highest-ever quarterly volume in brand's 30-year history
+                                </div>
+                                <ul className="impact-bullets">
+                                    <li>Led 25-member cross-functional team through complete product relaunch</li>
+                                    <li>Increased brand salience 1,100bps among Gen-Z, transforming legacy brand into youth cultural icon</li>
+                                    <li>Generated 760M+ views and 7.8M+ engagements with 4.2× earned-to-paid media ratio</li>
+                                    <li>Drove 3× sales growth MoM by optimizing $2.3M marketing budget</li>
+                                    <li>Contributed to 40% stock price uplift through strategic brand transformation</li>
+                                </ul>
+                            </div>
+
+                            <div className="impact-card">
+                                <div className="impact-company">HyperBeing</div>
+                                <div className="impact-role">Founder & CEO</div>
+                                <div className="impact-period">Sep 2023 - Oct 2024</div>
+                                <div className="impact-metric">9M+ Users</div>
+                                <div className="impact-description">
+                                    Built and scaled MENAP's first AI influencer ecosystem to 9 million organic users
+                                </div>
+                                <ul className="impact-bullets">
+                                    <li>Pioneered AI influencer capable of live, personalized audience interactions</li>
+                                    <li>Reduced content delivery time by 85% and costs by 25%</li>
+                                    <li>Secured 15+ enterprise partnerships with major brands</li>
+                                    <li>Achieved 5-figure exit through strategic acquisition</li>
+                                    <li>Built platform generating 3× more engagement than human influencers</li>
+                                </ul>
+                            </div>
+
+                            <div className="impact-card">
+                                <div className="impact-company">Yes Inc</div>
+                                <div className="impact-role">Founder</div>
+                                <div className="impact-period">Jan 2020 - Aug 2022</div>
+                                <div className="impact-metric">$35K/Quarter</div>
+                                <div className="impact-description">
+                                    Scaled bootstrapped web3 growth agency from 1 to 5 FTEs with 25+ clients
+                                </div>
+                                <ul className="impact-bullets">
+                                    <li>Generated $35K quarterly revenue advising on digital transformation</li>
+                                    <li>Increased client performance 60% YoY through strategic process redesign</li>
+                                    <li>Boosted operational efficiency 40% via agile delivery sprints</li>
+                                    <li>Advised 25+ clients on sustainable adoption of digital tools</li>
+                                </ul>
+                            </div>
+
+                            <div className="impact-card">
+                                <div className="impact-company">PILDAT (UNDP)</div>
+                                <div className="impact-role">Junior Consultant</div>
+                                <div className="impact-period">Mar 2021 - Jul 2022</div>
+                                <div className="impact-metric">93.3% Faster</div>
+                                <div className="impact-description">
+                                    Transformed national youth engagement program across 272 constituencies
+                                </div>
+                                <ul className="impact-bullets">
+                                    <li>Scaled youth engagement by 30% YoY through program redesign</li>
+                                    <li>Improved decision-making speed 93.3% with Python automation</li>
+                                    <li>Secured 60% greater visibility via strategic media partnerships</li>
+                                    <li>Worked with government stakeholders and ISPR at Pakistan's GHQ</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="story" className="story-section">
+                        <div className="story-grid">
+                            <div>
+                                <h2 className="section-title">The Story</h2>
+                                <div className="story-text">
+                                    Most people at my age are still figuring out what they want to do. <strong>I've already built businesses, 
+                                    led transformations at a Fortune 500 company, and competed globally at the world's biggest creativity festival.</strong>
+                                    <br/><br/>
+                                    I started <strong>Yes Inc at 19</strong>, bootstrapping a web3 agency that generated $35K quarterly. 
+                                    That taught me how to sell, deliver, and scale without safety nets.
+                                    <br/><br/>
+                                    At <strong>Unilever</strong>, I became the first intern to present to the CEO, then came back as an Associate 
+                                    Brand Manager to deliver the highest quarterly volume in 30 years. That taught me how to navigate complexity 
+                                    at scale and drive results when the stakes are highest.
+                                    <br/><br/>
+                                    With <strong>HyperBeing</strong>, I pioneered MENAP's first AI influencer ecosystem, reaching 9 million users. 
+                                    That taught me the future is being built right now, and you either lead it or watch from the sidelines.
+                                    <br/><br/>
+                                    I'm not looking for permission. I'm looking for the next mountain to climb.
+                                </div>
+                            </div>
+                            <div className="story-highlight">
+                                "I don't wait for transformation to happen. I engineer it. Whether it's turning a legacy brand into a Gen-Z 
+                                cultural icon, building AI platforms from scratch, or competing against Fortune 500 teams at Cannes—I bring 
+                                the intensity, the analytical rigor, and the creative fire to make impossible things happen."
+                            </div>
+                        </div>
+
+                        <div className="principles">
+                            <div className="principle-card">
+                                <div className="principle-number">01</div>
+                                <div className="principle-title">Proof Over Potential</div>
+                                <div className="principle-description">
+                                    I don't just have smart degrees. I have delivered transformations, built organizations, 
+                                    and managed complexity at scale. Results speak louder than resumes.
+                                </div>
+                            </div>
+                            <div className="principle-card">
+                                <div className="principle-number">02</div>
+                                <div className="principle-title">Builder Mentality</div>
+                                <div className="principle-description">
+                                    From AI platforms to marketing campaigns to entire agencies—I build things from scratch. 
+                                    I see problems as opportunities to create something that didn't exist before.
+                                </div>
+                            </div>
+                            <div className="principle-card">
+                                <div className="principle-number">03</div>
+                                <div className="principle-title">Global × Local</div>
+                                <div className="principle-description">
+                                    Competed globally at Cannes. Studied in Turkey. Built startups in MENAP. Transformed brands 
+                                    in Pakistan. I operate across cultures and contexts seamlessly.
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="awards" className="section">
+                        <h2 className="section-title">Recognition</h2>
+                        <p className="section-subtitle">
+                            Awards aren't the goal—they're the proof that what I'm building matters.
+                        </p>
+
+                        <div className="awards-grid">
+                            <div className="award-card">
+                                <div className="award-icon">🏆</div>
+                                <div className="award-title">Top 4 Globally at Cannes Young Lions</div>
+                                <div className="award-description">
+                                    Competed against teams from 67 countries, including Fortune 500 companies. 
+                                    Ranked Top 4 globally at the world's most prestigious creativity festival.
+                                </div>
+                            </div>
+                            <div className="award-card">
+                                <div className="award-icon">🇵🇰</div>
+                                <div className="award-title">National Cannes Young Lions Winner</div>
+                                <div className="award-description">
+                                    Won Pakistan's national competition to represent the country at Cannes International 
+                                    Festival of Creativity in 2025.
+                                </div>
+                            </div>
+                            <div className="award-card">
+                                <div className="award-icon">🎓</div>
+                                <div className="award-title">Dean's Honor List (Every Year)</div>
+                                <div className="award-description">
+                                    Maintained 3.75 CGPA at LUMS (Pakistan's #1 business school) while building startups. 
+                                    100% merit scholarship for A Levels (2015-2020).
+                                </div>
+                            </div>
+                            <div className="award-card">
+                                <div className="award-icon">🌍</div>
+                                <div className="award-title">Nominated for Turkey Exchange</div>
+                                <div className="award-description">
+                                    Selected from entire cohort of 1,500+ students to represent Pakistan at Özyeğin 
+                                    University, Turkey's top institution.
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="hyperbeing" className="section">
+                        <h2 className="section-title">HyperBeing: The Platform</h2>
+                        <p className="section-subtitle">
+                            MENAP's first AI influencer ecosystem. Scaled to 9M+ users. Generated 3× more engagement than human influencers.
+                        </p>
+
+                        <div className="impact-grid">
+                            <div className="impact-card">
+                                <div className="impact-company">🤖 AI-Powered Innovation</div>
+                                <div className="impact-role">Virtual Influencer Ecosystem</div>
+                                <div className="impact-description">
+                                    Created hyper-realistic AI influencers capable of live, personalized audience interactions. 
+                                    Custom-generated virtual influencers targeting diverse affinities across fashion, food, and lifestyle.
+                                </div>
+                                <ul className="impact-bullets">
+                                    <li>Always-on, low-cost content engine reacting in hours, not weeks</li>
+                                    <li>Novel content generating 3× more engagement than human influencers</li>
+                                    <li>100% brand control - became exclusive brand assets</li>
+                                </ul>
+                            </div>
+
+                            <div className="impact-card">
+                                <div className="impact-company">📈 Scalable Marketing</div>
+                                <div className="impact-role">D2C & Marketplace Funneling</div>
+                                <div className="impact-description">
+                                    Built scalable marketing solutions funneling high reach to D2C brands and marketplaces. 
+                                    Secured partnerships with L'Oréal, Dove, Daraz, and BagAllery.
+                                </div>
+                                <ul className="impact-bullets">
+                                    <li>15+ enterprise partnerships with major brands</li>
+                                    <li>Reduced delivery time by 85% and costs by 25%</li>
+                                    <li>Achieved 5-figure exit through strategic acquisition</li>
+                                </ul>
+                            </div>
+
+                            <div className="impact-card">
+                                <div className="impact-company">🎯 The Numbers</div>
+                                <div className="impact-role">Scale & Impact</div>
+                                <div className="impact-metric">9M+</div>
+                                <div className="impact-description">
+                                    Organic users reached globally across MENAP region
+                                </div>
+                                <ul className="impact-bullets">
+                                    <li>Posed with real people and places for authenticity</li>
+                                    <li>Flexible for any medium: OOH, TVCs, DVCs, social content</li>
+                                    <li>Pioneered AI influencer technology in emerging markets</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+
+
+                    <section className="section" style={{ background: 'rgba(0, 0, 0, 0.5)', padding: '120px 60px' }}>
+                        <h2 className="section-title">The Moments</h2>
+                        <p className="section-subtitle">
+                            From Pakistan to Cannes. From boardrooms to global stages.
+                        </p>
+
+                        <div style={{ 
+                            display: 'grid', 
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))', 
+                            gap: '30px',
+                            marginBottom: '60px'
+                        }}>
+                            <div style={{
+                                position: 'relative',
+                                borderRadius: '20px',
+                                overflow: 'hidden',
+                                border: '2px solid rgba(0, 255, 136, 0.3)',
+                                transition: 'all 0.3s',
+                                cursor: 'pointer'
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+                            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                            >
+                                <img 
+                                    src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD..." 
+                                    alt="Cannes Red Carpet" 
+                                    style={{ width: '100%', height: '400px', objectFit: 'cover' }}
+                                />
+                                <div style={{
+                                    position: 'absolute',
+                                    bottom: 0,
+                                    left: 0,
+                                    right: 0,
+                                    background: 'linear-gradient(transparent, rgba(0,0,0,0.9))',
+                                    padding: '60px 30px 30px',
+                                    color: '#fff'
+                                }}>
+                                    <h3 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '10px' }}>
+                                        🎬 Cannes International Festival
+                                    </h3>
+                                    <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.8)' }}>
+                                        Red carpet at the world's biggest creativity festival. Top 4 out of 67 countries.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div style={{
+                                position: 'relative',
+                                borderRadius: '20px',
+                                overflow: 'hidden',
+                                border: '2px solid rgba(0, 255, 136, 0.3)',
+                                transition: 'all 0.3s',
+                                cursor: 'pointer'
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+                            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                            >
+                                <img 
+                                    src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD..." 
+                                    alt="Speaking at Cannes" 
+                                    style={{ width: '100%', height: '400px', objectFit: 'cover' }}
+                                />
+                                <div style={{
+                                    position: 'absolute',
+                                    bottom: 0,
+                                    left: 0,
+                                    right: 0,
+                                    background: 'linear-gradient(transparent, rgba(0,0,0,0.9))',
+                                    padding: '60px 30px 30px',
+                                    color: '#fff'
+                                }}>
+                                    <h3 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '10px' }}>
+                                        🎤 Representing Pakistan Globally
+                                    </h3>
+                                    <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.8)' }}>
+                                        Competing on the international stage against Fortune 500 teams.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style={{
+                            background: 'linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1))',
+                            border: '2px solid rgba(0, 255, 136, 0.3)',
+                            borderRadius: '20px',
+                            padding: '50px',
+                            textAlign: 'center'
+                        }}>
+                            <h3 style={{ fontSize: '36px', fontWeight: '900', marginBottom: '20px', color: '#00ff88' }}>
+                                400M+ Views. 760M+ Impressions. 9M+ Users Reached.
+                            </h3>
+                            <p style={{ fontSize: '20px', color: 'rgba(255,255,255,0.8)', maxWidth: '800px', margin: '0 auto' }}>
+                                Led transformations at Unilever that delivered 30-year records. Built AI platforms from scratch. 
+                                Competed at Cannes. Created campaigns that moved markets.
+                            </p>
+                        </div>
+                    </section>
+
+                    <section className="section" style={{ background: 'rgba(255, 255, 255, 0.02)' }}>
+                        <h2 className="section-title">Explore My Work</h2>
+                        <p className="section-subtitle">
+                            Dive deeper into the projects, platforms, and brands I've built and transformed.
+                        </p>
+
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(4, 1fr)',
+                            gap: '30px',
+                            marginTop: '60px'
+                        }}
+                        className="explore-grid">
+                            <a 
+                                href="https://www.instagram.com/zaraaa.pk/" 
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                    textDecoration: 'none',
+                                    background: 'linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1))',
+                                    border: '2px solid rgba(0, 255, 136, 0.3)',
+                                    borderRadius: '20px',
+                                    padding: '40px',
+                                    transition: 'all 0.3s',
+                                    cursor: 'pointer',
+                                    display: 'block'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(-10px)';
+                                    e.currentTarget.style.boxShadow = '0 20px 60px rgba(0, 255, 136, 0.3)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.boxShadow = 'none';
+                                }}
+                            >
+                                <div style={{ fontSize: '48px', marginBottom: '20px' }}>🤖</div>
+                                <h3 style={{ fontSize: '24px', fontWeight: '700', color: '#00ff88', marginBottom: '15px' }}>
+                                    MENAP's First AI Influencer
+                                </h3>
+                                <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)', lineHeight: '1.6' }}>
+                                    Meet Zara - the AI influencer I created. 9M+ organic reach, 3× more engagement than humans. 
+                                    Click to see the future of digital marketing.
+                                </p>
+                                <div style={{ marginTop: '20px', color: '#00ff88', fontSize: '14px', fontWeight: '600' }}>
+                                    VIEW ZARA →
+                                </div>
+                            </a>
+
+                            <a 
+                                href="https://www.lovethework.com/young-entries/when-beauty-is-felt-not-seen-1126" 
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                    textDecoration: 'none',
+                                    background: 'linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1))',
+                                    border: '2px solid rgba(0, 255, 136, 0.3)',
+                                    borderRadius: '20px',
+                                    padding: '40px',
+                                    transition: 'all 0.3s',
+                                    cursor: 'pointer',
+                                    display: 'block'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(-10px)';
+                                    e.currentTarget.style.boxShadow = '0 20px 60px rgba(0, 255, 136, 0.3)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.boxShadow = 'none';
+                                }}
+                            >
+                                <div style={{ fontSize: '48px', marginBottom: '20px' }}>🏆</div>
+                                <h3 style={{ fontSize: '24px', fontWeight: '700', color: '#00ff88', marginBottom: '15px' }}>
+                                    Cannes Official Publication
+                                </h3>
+                                <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)', lineHeight: '1.6' }}>
+                                    "When Beauty is Felt, Not Seen" - Shortlisted at Cannes Lions. 
+                                    See the campaign that competed globally.
+                                </p>
+                                <div style={{ marginTop: '20px', color: '#00ff88', fontSize: '14px', fontWeight: '600' }}>
+                                    VIEW ON CANNES →
+                                </div>
+                            </a>
+
+                            <a 
+                                href="https://www.instagram.com/knorrnoodles" 
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                    textDecoration: 'none',
+                                    background: 'linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1))',
+                                    border: '2px solid rgba(0, 255, 136, 0.3)',
+                                    borderRadius: '20px',
+                                    padding: '40px',
+                                    transition: 'all 0.3s',
+                                    cursor: 'pointer',
+                                    display: 'block'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(-10px)';
+                                    e.currentTarget.style.boxShadow = '0 20px 60px rgba(0, 255, 136, 0.3)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.boxShadow = 'none';
+                                }}
+                            >
+                                <div style={{ fontSize: '48px', marginBottom: '20px' }}>🍜</div>
+                                <h3 style={{ fontSize: '24px', fontWeight: '700', color: '#00ff88', marginBottom: '15px' }}>
+                                    Knorr at Unilever
+                                </h3>
+                                <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)', lineHeight: '1.6' }}>
+                                    The €70M brand I lead. Q3'25 highest quarterly volume in 30-year history. 
+                                    1,100bps brand salience increase among Gen-Z.
+                                </p>
+                                <div style={{ marginTop: '20px', color: '#00ff88', fontSize: '14px', fontWeight: '600' }}>
+                                    VIEW KNORR →
+                                </div>
+                            </a>
+
+                            <a 
+                                href="https://www.canva.com/design/DAG3xaoEr3s/lfzp2KH5CESHWiC8zQvdWA/view?utm_content=DAG3xaoEr3s&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h9369b1316a" 
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                    textDecoration: 'none',
+                                    background: 'linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1))',
+                                    border: '2px solid rgba(0, 255, 136, 0.3)',
+                                    borderRadius: '20px',
+                                    padding: '40px',
+                                    transition: 'all 0.3s',
+                                    cursor: 'pointer',
+                                    display: 'block'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(-10px)';
+                                    e.currentTarget.style.boxShadow = '0 20px 60px rgba(0, 255, 136, 0.3)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.boxShadow = 'none';
+                                }}
+                            >
+                                <div style={{ fontSize: '48px', marginBottom: '20px' }}>📊</div>
+                                <h3 style={{ fontSize: '24px', fontWeight: '700', color: '#00ff88', marginBottom: '15px' }}>
+                                    HyperBeing Pitch Deck
+                                </h3>
+                                <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)', lineHeight: '1.6' }}>
+                                    The complete story of building MENAP's first AI influencer platform. 
+                                    Strategy, execution, and the 5-figure exit.
+                                </p>
+                                <div style={{ marginTop: '20px', color: '#00ff88', fontSize: '14px', fontWeight: '600' }}>
+                                    VIEW DECK →
+                                </div>
+                            </a>
+                        </div>
+                    </section>
+
+                    <section id="contact" className="cta-section">
+                        <h2 className="cta-title">Let's Build Something Exceptional</h2>
+                        <p className="cta-subtitle">
+                            Whether you're looking for someone to lead transformation, build from scratch, 
+                            or compete on the global stage—I'm ready. Let's talk.
+                        </p>
+                        <div className="cta-buttons">
+                            <a href="mailto:the.mibrahim.27@gmail.com" className="btn btn-primary">
+                                Email Me
+                            </a>
+                            <a href="tel:+923208661316" className="btn btn-secondary">
+                                Call: +92 320 8661316
+                            </a>
+                        </div>
+                    </section>
+
+                    <footer className="footer">
+                        <p className="footer-text">
+                            © 2025 Muhammad Ibrahim. Builder × Strategist × Disruptor.
+                            <br/>
+                            Based in Karachi, Pakistan. Operating globally.
+                        </p>
+                    </footer>
+                </>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
